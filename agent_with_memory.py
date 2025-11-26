@@ -22,6 +22,7 @@ from config import (
     DEFAULT_MODEL,
     DEFAULT_BUFFER_SIZE,
     DEFAULT_LONGTERM_FILE,
+    OPENAI_API_KEY,
 )
 from tools import (
     RetrieveLongTermMemoryTool,
@@ -340,10 +341,9 @@ Bạn là một trợ lý AI thông minh, có khả năng tư vấn sức khỏe
 
 def main():
     """Main function for testing the agent"""
-    api_key = os.getenv("OPENAI_API_KEY")
         
     agent = MemoryAgent(
-        openai_api_key=api_key,
+        openai_api_key=OPENAI_API_KEY,
         model_name=DEFAULT_MODEL,
         buffer_size=DEFAULT_BUFFER_SIZE,
         longterm_file=DEFAULT_LONGTERM_FILE

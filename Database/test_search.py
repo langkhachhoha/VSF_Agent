@@ -1,11 +1,8 @@
 import json
 from qdrant_client import QdrantClient
 from protonx import ProtonX
+from config import QDRANT_URL, QDRANT_API_KEY, COLLECTION_NAME
 
-# ===================== CONFIG =====================
-QDRANT_URL = "https://6b21144b-609e-4f90-a884-7b27d70f2d97.us-east4-0.gcp.cloud.qdrant.io:6333"
-QDRANT_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.X_8203L06c_QSb1qPXh7Z0Z6jxk5ZplN6oJVlrYaLug"
-COLLECTION_NAME = "doctor_vinmec"
 
 # Khởi tạo clients
 qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)

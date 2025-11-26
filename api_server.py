@@ -31,7 +31,7 @@ except ImportError as e:
 # Configuration
 # ============================================================================
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+from config import OPENAI_API_KEY
 LONGTERM_FILE = "longterm.txt"
 
 # ============================================================================

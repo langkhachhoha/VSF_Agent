@@ -5,11 +5,9 @@ from qdrant_client import QdrantClient
 from qdrant_client.models import VectorParams, Distance, PointStruct
 from protonx import ProtonX 
 import os
-# ===================== CONFIG =====================
-QDRANT_URL = "https://6b21144b-609e-4f90-a884-7b27d70f2d97.us-east4-0.gcp.cloud.qdrant.io:6333"
-QDRANT_API_KEY = os.getenv("QDRANT_API_KEY")
-COLLECTION_NAME = "doctor_vinmec"
 
+from config import QDRANT_URL, QDRANT_API_KEY, COLLECTION_NAME, PROTONX_API_KEY
+# ===================== CONFIG =====================
 qdrant = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
 
 # ===================== STEP 1. Đọc file JSON chứa thông tin bác sĩ =====================
@@ -35,7 +33,7 @@ Giới thiệu: {gioi_thieu}"""
     return formatted_text
 
 # ===================== STEP 3. Tạo batch embedding =====================
-protonx_client = ProtonX(api_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImhhNzQ2NjUyNEBnbWFpbC5jb20iLCJpYXQiOjE3NjMwMzA5NDEsImV4cCI6MTc2NTYyMjk0MX0.OYigPmHvFoTdPCPulH1101pFeJxuJsElTPHR_cNotSg")
+protonx_client = ProtonX(api_key=PROTONX_API_KEY)
 
 def get_batch_embeddings(texts, max_retries=5):
     """

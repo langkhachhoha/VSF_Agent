@@ -26,6 +26,7 @@ from config import (
     PROTONX_API_KEY,
     LONGTERM_COLLECTION_NAME,
     DEFAULT_LONGTERM_FILE,
+    OPENAI_API_KEY,
 )
 
 # Setup logger
@@ -583,12 +584,9 @@ def update_memory(
 
 def main():
     """Main function for testing"""
-
-    api_key = os.getenv("OPENAI_API_KEY")
-
     # Run update
     result = update_memory(
-        openai_api_key=api_key,
+        openai_api_key=OPENAI_API_KEY,
         max_days=10
     )
     
