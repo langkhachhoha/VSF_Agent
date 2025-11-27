@@ -12,8 +12,8 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader, Cons
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter as HTTPSpanExporter
+from opentelemetry.exporter.otlp.proto.http.metric_exporter import OTLPMetricExporter as HTTPMetricExporter
 
 # Configure logging
 logging.basicConfig(
@@ -57,7 +57,9 @@ def setup_telemetry(
     
     # Add OTLP exporter for production
     if enable_otlp_export and otlp_endpoint:
-        otlp_exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
+        # Ensure endpoint has the correct path for traces
+        trace_endpoint = otlp_endpoint if otlp_endpoint.endswith('/v1/traces') else f"{otlp_endpoint}/v1/traces"
+        otlp_exporter = HTTPSpanExporter(endpoint=trace_endpoint)
         tracer_provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
     
     # Set global tracer provider
@@ -78,8 +80,10 @@ def setup_telemetry(
         metric_readers.append(console_metric_reader)
     
     if enable_otlp_export and otlp_endpoint:
+        # Ensure endpoint has the correct path for metrics
+        metric_endpoint = otlp_endpoint if otlp_endpoint.endswith('/v1/metrics') else f"{otlp_endpoint}/v1/metrics"
         otlp_metric_reader = PeriodicExportingMetricReader(
-            OTLPMetricExporter(endpoint=otlp_endpoint, insecure=True),
+            HTTPMetricExporter(endpoint=metric_endpoint),
             export_interval_millis=60000
         )
         metric_readers.append(otlp_metric_reader)
@@ -121,10 +125,10 @@ def get_meter(name: str = __name__):
 # Initialize telemetry (can be configured via environment variables)
 if os.getenv("ENABLE_TELEMETRY", "true").lower() == "true":
     setup_telemetry(
-        service_name=os.getenv("SERVICE_NAME", "doctor-vinmec-agent"),
-        enable_console_export=os.getenv("CONSOLE_EXPORT", "true").lower() == "true",
-        enable_otlp_export=os.getenv("OTLP_EXPORT", "false").lower() == "true",
-        otlp_endpoint=os.getenv("OTLP_ENDPOINT", "localhost:4317")
+        service_name=os.getenv("service_name", "doctor-vinmec-agent"),
+        enable_console_export=os.getenv("CONSOLE_EXPORT", "false").lower() == "true",
+        enable_otlp_export=os.getenv("OTLP_EXPORT", "true").lower() == "true",
+        otlp_endpoint=os.getenv("OTLP_ENDPOINT", "http://localhost:4318")
     )
     logger.info("🔍 OpenTelemetry enabled")
 else:

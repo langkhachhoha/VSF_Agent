@@ -13,18 +13,12 @@ pip install -r requirements_agent.txt
 
 ### Khởi động Jaeger
 ```bash
-docker run --rm \    
-  -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 \
-  -p 16686:16686 \
-  -p 4317:4317 \
-  -p 4318:4318 \
-  -p 9411:9411 \
-  jaegertracing/all-in-one:latest
+docker run --rm --network host -e COLLECTOR_ZIPKIN_HOST_PORT=:9411 jaegertracing/all-in-one:latest
 ```
 
 ### Khởi động API với telemetry
 ```bash
-opentelemetry-instrument --service_name vsf uvicorn api_server:app
+opentelemetry-instrument --service_name vsf --traces_exporter otlp --metrics_exporter otlp uvicorn api_server:app --host 0.0.0.0 --port 8000
 ```
 
 ### Khởi động Streamlit app
